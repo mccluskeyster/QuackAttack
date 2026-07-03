@@ -1,0 +1,23 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot-specific exports and build output
+# NOTE: export_presets.cfg is intentionally committed (needed for CI exports).
+# Keep signing secrets out of it — pass keystore user/password via env or
+# `--export` flags instead.
+/build/
+*.translation
+
+# Imported assets cache (Godot regenerates from source + .import)
+.import/
+
+# Mono/C# (unused for a GDScript project, kept for safety)
+.mono/
+data_*/
+mono_crash.*.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*~

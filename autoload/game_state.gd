@@ -16,10 +16,14 @@ const SAVE_PATH := "user://save.cfg"
 const MASS_PER_POINT := 0.20
 ## Weight at which the duck is too fat to fly → grounded → game over.
 const MAX_WEIGHT := 100.0
-## Weight burned per second while actively flying (metabolism).
-const METABOLISM_RATE := 3.0
+## Weight burned per second while actively flying (metabolism). Deliberately
+## slow: it only nibbles at fat, so upgrades and offload stay essential.
+const METABOLISM_RATE := 1.0
 ## Weight dropped by one active offload (poop / drop food).
 const OFFLOAD_AMOUNT := 18.0
+## Score lost per offload, as a fraction of the dropped food's eaten value.
+## Offloading is a real tradeoff: shed weight fast, but forfeit some score.
+const OFFLOAD_SCORE_PENALTY := 0.25
 ## Speed multiplier lost per unit of weight.
 const WEIGHT_SLOWDOWN := 0.008
 ## Floor so a heavy (but not grounded) duck still crawls.
@@ -86,10 +90,18 @@ func speed_multiplier() -> float:
 
 
 ## Deliberately shed weight (poop / drop food). Called by the duck on input.
+## Sheds weight fast but forfeits some score — you're throwing away food.
 func offload() -> void:
 	if not session_active or weight <= 0.0:
 		return
+	var before := weight
 	_set_weight(weight - OFFLOAD_AMOUNT)
+	var shed := before - weight
+	# Score cost scales with the food value the shed weight represents.
+	var cost := int(round(shed / MASS_PER_POINT * OFFLOAD_SCORE_PENALTY))
+	if cost > 0:
+		score = maxi(0, score - cost)
+		Events.emit_score_changed(score)
 
 
 ## Activate a temporary speed upgrade (rideable/propulsion/drone). A new one

@@ -1,5 +1,13 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/duck/duck.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/virtual_joystick.tscn" id="2"]
 
 [node name="Main" type="Node2D"]
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Duck" parent="." instance=ExtResource("1")]
+position = Vector2(360, 640)
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("2")]
